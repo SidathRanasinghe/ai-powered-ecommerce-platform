@@ -7,15 +7,18 @@ class RedisClient {
   private publisher: Redis;
 
   constructor() {
-    const redisConfig = {
+    const redisConfig: any = {
       host: config.redis.host,
       port: config.redis.port,
-      password: config.redis.password,
       db: config.redis.db,
       retryDelayOnFailover: 100,
       enableReadyCheck: false,
       maxRetriesPerRequest: null,
     };
+
+    if (typeof config.redis.password === "string") {
+      redisConfig.password = config.redis.password;
+    }
 
     this.client = new Redis(redisConfig);
     this.subscriber = new Redis(redisConfig);

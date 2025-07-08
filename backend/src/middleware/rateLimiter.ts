@@ -31,7 +31,9 @@ export const authRateLimiter = rateLimit({
 });
 
 // Speed limiter for heavy operations
-export const speedLimiter = slowDown({
+import { RequestHandler } from "express";
+
+export const speedLimiter: RequestHandler = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 2, // allow 2 requests per windowMs at full speed
   delayMs: 500, // slow down subsequent requests by 500ms per request
