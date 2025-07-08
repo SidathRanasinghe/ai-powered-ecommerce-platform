@@ -16,10 +16,21 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
+      /** common alias */
+      "@/*": ["./*"],
       "@/backend/*": ["./backend/src/*"],
       "@/frontend/*": ["./frontend/src/*"],
-      "@/mobile/*": ["./mobile-app/src/*"]
+      "@/mobile/*": ["./mobile-app/src/*"],
+      "@/ml/*": ["./ml-service/src/*"],
+      /** backend related alias */
+      "@/config/*": ["./backend/src/config/*"],
+      "@/controllers/*": ["c./backend/src/ontrollers/*"],
+      "@/middleware/*": ["./backend/src/middleware/*"],
+      "@/models/*": ["./backend/src/models/*"],
+      "@/routes/*": ["./backend/src/routes/*"],
+      "@/services/*": ["./backend/src/services/*"],
+      "@/utils/*": ["./backend/src/utils/*"],
+      "@/types/*": ["./backend/src/types/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
