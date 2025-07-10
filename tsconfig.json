@@ -24,7 +24,7 @@
       "@/ml/*": ["./ml-service/src/*"],
       /** backend related alias */
       "@/config/*": ["./backend/src/config/*"],
-      "@/controllers/*": ["c./backend/src/ontrollers/*"],
+      "@/controllers/*": ["./backend/src/controllers/*"],
       "@/middleware/*": ["./backend/src/middleware/*"],
       "@/models/*": ["./backend/src/models/*"],
       "@/routes/*": ["./backend/src/routes/*"],

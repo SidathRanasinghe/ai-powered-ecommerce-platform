@@ -1,6 +1,5 @@
 import { CorsOptions } from "cors";
 import { config } from "@/config/config";
-// import { config } from "../config/config";
 
 const allowedOrigins = [
   "http://localhost:3000", // Frontend development

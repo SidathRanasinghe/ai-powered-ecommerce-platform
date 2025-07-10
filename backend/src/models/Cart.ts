@@ -10,7 +10,8 @@ export interface ICart extends Document {
     shipping: number;
     total: number;
   };
-  sessionId?: string;
+  couponCode?: string | undefined;
+  sessionId?: string | undefined;
   expiresAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -18,21 +19,22 @@ export interface ICart extends Document {
 
 interface ICartItem {
   _id?: mongoose.Types.ObjectId;
-  product: mongoose.Types.ObjectId;
-  variant?: mongoose.Types.ObjectId;
+  productId: mongoose.Types.ObjectId;
+  variantId?: mongoose.Types.ObjectId;
   quantity: number;
   price: number;
   total: number;
   addedAt: Date;
+  updatedAt: Date;
 }
 
 const CartItemSchema = new Schema<ICartItem>({
-  product: {
+  productId: {
     type: Schema.Types.ObjectId,
     ref: "Product",
     required: true,
   },
-  variant: {
+  variantId: {
     type: Schema.Types.ObjectId,
   },
   quantity: {
@@ -52,6 +54,10 @@ const CartItemSchema = new Schema<ICartItem>({
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const CartSchema = new Schema<ICart>(
@@ -68,11 +74,20 @@ const CartSchema = new Schema<ICart>(
       shipping: { type: Number, default: 0 },
       total: { type: Number, default: 0 },
     },
+    couponCode: { type: String, default: null },
     sessionId: { type: String },
     expiresAt: {
       type: Date,
       default: Date.now,
       expires: 7 * 24 * 60 * 60, // 7 days
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   {

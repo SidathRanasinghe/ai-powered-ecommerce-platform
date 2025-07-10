@@ -7,10 +7,10 @@ export interface IUser extends Document {
   lastName: string;
   email: string;
   password: string;
-  phone?: string;
-  dateOfBirth?: Date;
-  gender?: "male" | "female" | "other";
-  avatar?: string;
+  phone?: string | undefined;
+  dateOfBirth?: Date | undefined;
+  gender?: "male" | "female" | "other" | undefined;
+  avatar?: string | undefined;
   addresses: IAddress[];
   preferences: {
     categories: string[];
@@ -23,10 +23,11 @@ export interface IUser extends Document {
   role: "customer" | "admin" | "vendor";
   isActive: boolean;
   isEmailVerified: boolean;
-  emailVerificationToken?: string;
-  passwordResetToken?: string;
-  passwordResetExpires?: Date;
-  lastLogin?: Date;
+  emailVerificationToken?: string | undefined;
+  emailVerificationTokenExpires?: Date | undefined;
+  passwordResetToken?: string | undefined;
+  passwordResetTokenExpires?: Date | undefined;
+  lastLogin?: Date | undefined;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -116,9 +117,12 @@ const UserSchema = new Schema<IUser>(
     isActive: { type: Boolean, default: true },
     isEmailVerified: { type: Boolean, default: false },
     emailVerificationToken: { type: String },
+    emailVerificationTokenExpires: { type: Date },
     passwordResetToken: { type: String },
-    passwordResetExpires: { type: Date },
+    passwordResetTokenExpires: { type: Date },
     lastLogin: { type: Date },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,

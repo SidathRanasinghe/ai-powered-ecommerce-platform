@@ -26,18 +26,22 @@ export interface IProduct extends Document {
   averageRating: number;
   totalReviews: number;
   vendor: mongoose.Types.ObjectId;
+  reviews: IProductReview[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface IProductImage {
+export interface IProductImage {
+  _id?: mongoose.Types.ObjectId; // Optional ID for the image
   url: string;
   alt: string;
   isPrimary: boolean;
   order: number;
+  createdAt?: Date; // Optional creation date
+  updatedAt?: Date; // Optional update date
 }
 
-interface IProductVariant {
+export interface IProductVariant {
   _id?: mongoose.Types.ObjectId;
   name: string;
   sku: string;
@@ -50,9 +54,11 @@ interface IProductVariant {
   };
   images: string[];
   isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-interface IInventory {
+export interface IInventory {
   quantity: number;
   lowStockThreshold: number;
   trackQuantity: boolean;
@@ -60,7 +66,7 @@ interface IInventory {
   stockStatus: "in_stock" | "out_of_stock" | "limited_stock";
 }
 
-interface IShipping {
+export interface IShipping {
   weight: number;
   dimensions: {
     length: number;
@@ -72,11 +78,28 @@ interface IShipping {
   requiresShipping: boolean;
 }
 
-interface ISEO {
+export interface ISEO {
   title?: string;
   description?: string;
   keywords: string[];
   slug: string;
+}
+
+export interface IProductReview {
+  _id: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
+  rating?: number;
+  product?: mongoose.Types.ObjectId;
+  order?: mongoose.Types.ObjectId;
+  title?: string;
+  comment: string;
+  createdAt: Date;
+  updatedAt: Date;
+  images?: string[];
+  isVerified?: boolean;
+  isApproved?: boolean;
+  helpfulVotes?: number;
+  reportedCount?: number;
 }
 
 const ProductImageSchema = new Schema<IProductImage>({
@@ -84,6 +107,8 @@ const ProductImageSchema = new Schema<IProductImage>({
   alt: { type: String, required: true },
   isPrimary: { type: Boolean, default: false },
   order: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const ProductVariantSchema = new Schema<IProductVariant>({
@@ -101,6 +126,24 @@ const ProductVariantSchema = new Schema<IProductVariant>({
   },
   images: [{ type: String }],
   isActive: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+
+const ProductReviewsSchema = new Schema<IProductReview>({
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  rating: { type: Number, min: 1, max: 5 },
+  product: { type: Schema.Types.ObjectId, ref: "Product" },
+  order: { type: Schema.Types.ObjectId, ref: "Order" },
+  title: { type: String, maxlength: 100 },
+  comment: { type: String, required: true, maxlength: 1000 },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+  images: [{ type: String }],
+  isVerified: { type: Boolean, default: false },
+  isApproved: { type: Boolean, default: false },
+  helpfulVotes: { type: Number, default: 0 },
+  reportedCount: { type: Number, default: 0 },
 });
 
 const ProductSchema = new Schema<IProduct>(
@@ -200,6 +243,9 @@ const ProductSchema = new Schema<IProduct>(
       ref: "User",
       required: true,
     },
+    reviews: [ProductReviewsSchema],
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,

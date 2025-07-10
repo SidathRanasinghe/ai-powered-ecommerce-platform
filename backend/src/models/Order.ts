@@ -19,6 +19,8 @@ export interface IOrder extends Document {
     | "refunded";
   shippingMethod: string;
   shippingCost: number;
+  shippedAt: Date | null; // Nullable for pending orders
+  deliveredAt: Date | null; // Nullable for pending orders
   trackingNumber?: string;
   notes?: string;
   createdAt: Date;
@@ -27,8 +29,8 @@ export interface IOrder extends Document {
 
 interface IOrderItem {
   _id?: mongoose.Types.ObjectId;
-  product: mongoose.Types.ObjectId;
-  variant?: mongoose.Types.ObjectId;
+  productId: mongoose.Types.ObjectId;
+  variantId?: mongoose.Types.ObjectId;
   name: string;
   sku: string;
   price: number;
@@ -56,6 +58,7 @@ interface IPayment {
   stripePaymentIntentId?: string;
   amount: number;
   currency: string;
+  metadata?: any;
   paidAt?: Date;
   refundedAt?: Date;
   refundAmount?: number;
@@ -70,12 +73,12 @@ interface IOrderTotals {
 }
 
 const OrderItemSchema = new Schema<IOrderItem>({
-  product: {
+  productId: {
     type: Schema.Types.ObjectId,
     ref: "Product",
     required: true,
   },
-  variant: {
+  variantId: {
     type: Schema.Types.ObjectId,
   },
   name: { type: String, required: true },
@@ -129,6 +132,7 @@ const OrderSchema = new Schema<IOrder>(
       stripePaymentIntentId: { type: String },
       amount: { type: Number, required: true },
       currency: { type: String, required: true, default: "USD" },
+      metadata: { type: Schema.Types.Mixed },
       paidAt: { type: Date },
       refundedAt: { type: Date },
       refundAmount: { type: Number },
@@ -155,8 +159,12 @@ const OrderSchema = new Schema<IOrder>(
     },
     shippingMethod: { type: String, required: true },
     shippingCost: { type: Number, default: 0 },
+    shippedAt: { type: Date, default: null }, // Nullable for pending orders
+    deliveredAt: { type: Date, default: null }, // Nullable for pending orders
     trackingNumber: { type: String },
     notes: { type: String },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,

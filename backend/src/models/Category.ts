@@ -52,6 +52,14 @@ const CategorySchema = new Schema<ICategory>(
       description: { type: String },
       keywords: [{ type: String }],
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: true,
