@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ml-service-config
+  namespace: ecommerce
+data:
+  ENVIRONMENT: "production"
+  MONGODB_URI: "mongodb://mongodb:27017/ecommerce"
+  REDIS_URL: "redis://redis:6379/0"
+  ALLOWED_ORIGINS: "http://frontend-service,http://localhost:3000"
+  MODEL_CACHE_TTL: "86400" # 24 hours

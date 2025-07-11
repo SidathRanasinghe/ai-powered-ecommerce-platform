@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  ml-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/ecommerce
+      - REDIS_URL=redis://redis:6379
+      - ML_SERVICE_PORT=8001
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./src:/app/src
+      - ./models:/app/models
+      - ./logs:/app/logs
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=ecommerce
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  ecommerce-network:
+    driver: bridge
